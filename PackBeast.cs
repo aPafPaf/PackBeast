@@ -22,6 +22,8 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     SlotInventory[,] playerInventory = new SlotInventory[12, 5];
 
+    Vector2 freeSlot = new Vector2(0, 0);
+
     public override bool Initialise()
     {
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
@@ -56,25 +58,30 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
             isWork = !isWork;
         }
 
-        DestroyWindowCheck();
         cursorActionType = GameController.IngameState.IngameUi.Cursor.Action;
 
-        if (!isWork || !beastElemets.FirstOrDefault().IsVisible || !InventoryIsOpen) return null;
+        if (!isWork || !InventoryIsOpen) return null;
+
+        DestroyWindowCheck();
 
         var now = DateTime.Now;
         if ((now - _lastExecutionTime).TotalMilliseconds < Settings.ActionDelay)
             return null;
 
+        var beastClass = beastElemets.FirstOrDefault(x => x.IsVisible);
+
+        if (beastClass == null) return null;
+
+        var beastsCurrent = beastClass.GetChildAtIndex(1).Children;
+
+        var beast = beastsCurrent.First();
+
+        freeSlot = SearchFreeSpace();
+
+        if (freeSlot.IsZero) return null;
+
         if (cursorActionType == MouseActionType.UseItem)
         {
-            var beastClass = beastElemets.FirstOrDefault(x => x.IsVisible);
-
-            if (beastClass == null) return null;
-
-            var beastsCurrent = beastClass.GetChildAtIndex(1).Children;
-
-            var beast = beastsCurrent.First();
-
             GrabBeast(beast.GetClientRectCache.Center);
 
             return null;
@@ -128,11 +135,8 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     public bool PlaceBeast()
     {
-        Vector2 freeSlot = SearchFreeSpace();
-
-        if (freeSlot.IsZero) return false;
-
-        this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
+        var itemsOnCursor = GameController.IngameState.ServerData.PlayerInventories.Where(x => x.TypeId == ExileCore.Shared.Enums.InventoryNameE.Cursor1);
+        if (itemsOnCursor.First().Inventory.ItemCount == 0) return false;
 
         Utils.Mouse.MouseMoveNonLinear(freeSlot + windowOffset);
         Thread.Sleep(5);
@@ -141,15 +145,6 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         Utils.Mouse.LeftUp(50);
 
         Thread.Sleep(5);
-
-        var itemsOnCursor = GameController.IngameState.ServerData.PlayerInventories.Where(x => x.TypeId == ExileCore.Shared.Enums.InventoryNameE.Cursor1);
-        if (itemsOnCursor.Any())
-        {
-            if (itemsOnCursor.First().Inventory.ItemCount > 0)
-            {
-                PlaceBeast();
-            }
-        }
 
         return true;
     }
@@ -254,9 +249,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         Vector2 itemPos = firstItem.GetClientRect().Center;
 
         Utils.Mouse.MouseMoveNonLinear(itemPos + windowOffset);
-        Thread.Sleep(5);
-
-        var sss = GameController.IngameState.UIHover?.Entity?.Metadata;
+        Thread.Sleep(50);
 
         Utils.Mouse.RightDown(50);
         Utils.Mouse.RightUp(50);
