@@ -82,7 +82,6 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         if (cursorActionType == MouseActionType.UseItem)
         {
             GrabBeast(beast.GetClientRectCache.Center);
-
             return null;
         }
 
