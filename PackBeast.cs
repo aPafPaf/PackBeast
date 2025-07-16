@@ -69,15 +69,24 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
             return null;
 
         var beastClass = beastElements.FirstOrDefault(x => x.IsVisible);
-        if (beastClass == null) return null;
+        if (beastClass == null)
+        {
+            isWork = false;
+        }
 
         var beastsCurrent = beastClass.GetChildAtIndex(1).Children;
         var beast = beastsCurrent.FirstOrDefault(x => x.IsVisible);
-        if (beast == null) return null;
+        if (beast == null)
+        {
+            isWork = false;
+        }
 
         freeSlot = SearchFreeSpace();
 
-        if (freeSlot.IsZero || beastClass == null) return null;
+        if (freeSlot.IsZero || beastClass == null)
+        {
+            isWork = false;
+        }
 
         if (cursorActionType == MouseActionType.UseItem)
         {
