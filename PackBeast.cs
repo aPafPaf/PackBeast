@@ -73,7 +73,6 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
         var beastsCurrent = beastClass.GetChildAtIndex(1).Children;
         var beast = beastsCurrent.FirstOrDefault(x => x.IsVisible);
-
         if (beast == null) return null;
 
         freeSlot = SearchFreeSpace();
