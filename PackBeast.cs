@@ -16,7 +16,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     private bool isWork = false;
 
-    private IList<Element> beastElemets;
+    private IList<Element> beastElements;
 
     private MouseActionType cursorActionType;
 
@@ -30,7 +30,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
         cursorActionType = GameController.IngameState.IngameUi.Cursor.Action;
 
-        beastElemets = GameController.IngameState.IngameUi
+        beastElements = GameController.IngameState.IngameUi
                 .GetChildAtIndex(47)
                 ?.GetChildAtIndex(2)
                 ?.GetChildAtIndex(0)
@@ -68,17 +68,17 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         if ((now - _lastExecutionTime).TotalMilliseconds < Settings.ActionDelay)
             return null;
 
-        var beastClass = beastElemets.FirstOrDefault(x => x.IsVisible);
-
+        var beastClass = beastElements.FirstOrDefault(x => x.IsVisible);
         if (beastClass == null) return null;
 
         var beastsCurrent = beastClass.GetChildAtIndex(1).Children;
+        var beast = beastsCurrent.FirstOrDefault(x => x.IsVisible);
 
-        var beast = beastsCurrent.First();
+        if (beast == null) return null;
 
         freeSlot = SearchFreeSpace();
 
-        if (freeSlot.IsZero) return null;
+        if (freeSlot.IsZero || beastClass == null) return null;
 
         if (cursorActionType == MouseActionType.UseItem)
         {
@@ -217,12 +217,12 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
 
         Utils.Mouse.MouseMoveNonLinear(beastPos + windowOffset);
-        Thread.Sleep(50);
+        Thread.Sleep(25);
 
-        Utils.Mouse.LeftDown(50);
-        Utils.Mouse.LeftUp(50);
+        Utils.Mouse.LeftDown(25);
+        Utils.Mouse.LeftUp(25);
 
-        Thread.Sleep(50);
+        Thread.Sleep(25);
 
         return true;
     }
@@ -249,12 +249,12 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         Vector2 itemPos = firstItem.GetClientRect().Center;
 
         Utils.Mouse.MouseMoveNonLinear(itemPos + windowOffset);
-        Thread.Sleep(50);
+        Thread.Sleep(25);
 
-        Utils.Mouse.RightDown(50);
-        Utils.Mouse.RightUp(50);
+        Utils.Mouse.RightDown(25);
+        Utils.Mouse.RightUp(25);
 
-        Thread.Sleep(50);
+        Thread.Sleep(25);
 
         return true;
     }
