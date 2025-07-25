@@ -21,7 +21,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     private IList<Element> beastElements;
 
-    private MouseActionType cursorActionType;
+    private string cursorActionString;
 
     SlotInventory[,] playerInventory = new SlotInventory[12, 5];
 
@@ -30,8 +30,6 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
     public override bool Initialise()
     {
         this.windowOffset = this.GameController.Window.GetWindowRectangle().TopLeft;
-
-        cursorActionType = GameController.IngameState.IngameUi.Cursor.Action;
 
         beastElements = GameController.IngameState.IngameUi
                 .GetChildAtIndex(47)
@@ -63,7 +61,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
             isWork = !isWork;
         }
 
-        cursorActionType = GameController.IngameState.IngameUi.Cursor.Action;
+        cursorActionString = GameController.IngameState.IngameUi.Cursor.ActionString;
 
         if (!isWork || !InventoryIsOpen) return null;
 
@@ -92,20 +90,20 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         {
             isWork = false;
         }
-
-        if (cursorActionType == MouseActionType.UseItem)
+        //itemise_captured_monster
+        if (cursorActionString == "itemise_captured_monster")
         {
             GrabBeast(beast.GetClientRectCache.Center);
             return null;
         }
-
-        if (cursorActionType == MouseActionType.HoldItem)
+        //add_captured_monster
+        if (cursorActionString == "add_captured_monster")
         {
             PlaceBeast();
             return null;
         }
 
-        if (cursorActionType == MouseActionType.Free)
+        if (cursorActionString == string.Empty)
         {
             GetBestiaryOrb();
             return null;
