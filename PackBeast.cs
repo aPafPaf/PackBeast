@@ -11,6 +11,9 @@ namespace PackBeast;
 
 public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 {
+    const string BESTIARY_ORB = "Metadata/Items/Currency/CurrencyItemiseCapturedMonster";
+    const string BESTIARY_ORB_FULL = "Metadata/Items/Currency/CurrencyItemisedCapturedMonster";
+
     private SharpDX.Vector2 windowOffset;
     private DateTime _lastExecutionTime = DateTime.MinValue;
 
@@ -47,6 +50,8 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     public override Job Tick()
     {
+        LogMessage(GameController.IngameState.IngameUi.Cursor.ActionString);
+
         if (Settings.StopHotKey.PressedOnce())
         {
             isWork = false;
@@ -148,10 +153,10 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
         Utils.Mouse.MouseMoveNonLinear(freeSlot + windowOffset);
         Thread.Sleep(5);
 
-        Utils.Mouse.LeftDown(50);
+        Utils.Mouse.LeftDown(25);
         Utils.Mouse.LeftUp(50);
 
-        Thread.Sleep(5);
+        Thread.Sleep(50);
 
         return true;
     }
@@ -236,11 +241,9 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
 
     public bool GetBestiaryOrb()
     {
-        string bsOrb = "Metadata/Items/Currency/CurrencyItemiseCapturedMonster";
-
         var playerInventory = GameController.IngameState.ServerData.PlayerInventories[0].Inventory.InventorySlotItems;
 
-        var bestiartOrbs = playerInventory.Where(item => item.Item.Metadata == bsOrb).ToList();
+        var bestiartOrbs = playerInventory.Where(item => item.Item.Metadata == BESTIARY_ORB).ToList();
 
         if (!bestiartOrbs.Any()) return false;
 
