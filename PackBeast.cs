@@ -5,7 +5,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Threading;9
 
 namespace PackBeast;
 
@@ -37,7 +37,7 @@ public partial class PackBeast : BaseSettingsPlugin<PackBeastSettings>
                 ?.GetChildAtIndex(0)
                 ?.GetChildAtIndex(1)
                 ?.GetChildAtIndex(1)
-                ?.GetChildAtIndex(8)
+                ?.GetChildAtIndex(9)
                 ?.GetChildAtIndex(0)
                 ?.GetChildAtIndex(18)
                 ?.GetChildAtIndex(1)
